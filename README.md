@@ -1,4 +1,4 @@
-# CI/CD Pipeline: Jenkins, SonarQube, and Docker all in EC2 Slave Setups
+# CI/CD Pipeline: Jenkins, SonarQube, and Docker all in EC2 Slave Setup
 ## Infrastructure
 
 ![image](https://github.com/didin012/Jenkins-EC2-CICD/assets/104528282/2e33feb2-3cc1-4c5c-8a1c-7aec2e66563c)
