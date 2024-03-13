@@ -1,7 +1,7 @@
 node {
     stage('SCM') {
         git branch: 'main', 
-        url: 'https://github.com/didin012/Jenkins-EC2-CICD'
+        url: 'https://github.com/didin012/Jenkins-EC2-CICD-SonarQube-Docker'
     }
         
     stage('SonarQube Analysis') {
