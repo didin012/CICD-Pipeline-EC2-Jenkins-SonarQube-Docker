@@ -38,6 +38,32 @@
 6.	Proceed on setting up your account for this Jenkins server instance.
 
 ## Check if our Code is Running
+1.  Click on New Item then Create a Freestyle project and name it.
+2.  Inside the **Source Code Management (SCM)** click Git and put your repository where the files are kept.
 
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/0d243943-11c0-433e-916b-292d6bed3deb)
 
+3.  Then enable the GitHub hook trigger for GITScm polling option inside Build Triggers. This will trigger the pipeline automatically whenever there are changes in the repository.
+4.  Click Save
+5.  Go to your GitHub repository then click ```Settings``` > ```Webhooks``` > ```Add Webhook``` then follow the details below.
 
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/c2212a72-0c06-4ed2-b793-24606f373b07)
+
+6.	Make sure you enable the **Pull Requests** and **Pushes**
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/5c0275f4-27bc-4582-a9f2-c93ba43f05b1)
+
+7.	Click **Add Webhook** then come back to Jenkins. Check if it is running, Click on **Build**
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/590a45bb-b7c0-4d1b-833f-41bc8ed214f0)
+
+8.	Go to **Workspaces** to check if there would be changes inside
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/82befcb7-b061-4557-bf6a-474f90774f6b)
+
+9.	Inside your repository try to add a file inside. This should trigger our pipeline
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/362e621a-6d84-4923-8e17-391e9aa7f34b)
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/9c52950b-40af-46c4-b720-acf85f24fbe0)
+
+## Configuring our SonarQube Server
