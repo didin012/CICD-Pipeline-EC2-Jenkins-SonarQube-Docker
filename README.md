@@ -127,3 +127,18 @@
 ![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/91e6845c-d718-47cf-9621-83e4f4f4eae8)
 
 ## Testing our SonarQube in Freestyle Project
+
+1.	Go to your Jenkins Project and select **Configure**. Go to **Build Steps** and add Execute SonarQube Scanner. Put the ```sonar.projectKey=<your_project_name>``` inside the **Analysis properties**.
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/a0cf14df-7eba-4136-8384-9ca9d9877e0c)
+
+2.	Save the pipeline and start the **Build**
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/526b6d34-501f-4042-a90f-46c6c87b3bc1)
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/0bfab305-45c6-4ac6-9902-e5635b4da06f)
+
+3.	Check the SonarQube server if it passed for more detailed information
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/9ce2d479-6bd2-4cc9-b94b-1b0c9f1c07bf)
+
+## Configuring Docker Instance
