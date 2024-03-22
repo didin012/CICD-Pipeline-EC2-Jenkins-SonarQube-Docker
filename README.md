@@ -3,7 +3,7 @@
 
 ![image](https://github.com/didin012/Jenkins-EC2-CICD/assets/104528282/2e33feb2-3cc1-4c5c-8a1c-7aec2e66563c)
 
-##Launching our EC2 Instances
+## Launching our EC2 Instances
 1. Launch an EC2 instance for our Jenkinsunch an EC2 instance for our Jenkins
 
 ![image](https://github.com/didin012/Jenkins-EC2-CICD/assets/104528282/0a20f780-d593-48dd-a200-9f46249eccb8)
@@ -142,3 +142,154 @@
 ![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/9ce2d479-6bd2-4cc9-b94b-1b0c9f1c07bf)
 
 ## Configuring Docker Instance
+1.	Go to the Docker instance via SSH then set the hostname to docker <br>
+```$ sudo hostnamectl set-hostname docker```<br>
+```$ /bin/bash```
+2.	Follow the commands below:<br>
+**Add Docker's official GPG key:**<br>
+```$ sudo apt-get update```<br>
+```$ sudo apt-get install ca-certificates curl```<br>
+```$ sudo install -m 0755 -d /etc/apt/keyrings```<br>
+```$ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc```<br>
+```$ sudo chmod a+r /etc/apt/keyrings/docker.asc```<br>
+**Add the repository to Apt sources:**<br>
+```$ echo \ "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \ (. /etc/os-release && echo "$VERSION_CODENAME") stable" | \ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null```<br>
+```$ sudo apt-get update```<br>
+```$ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin```<br>
+**To check**<br>
+```$ sudo docker run hello-world```
+3.	Create a website directory and this is where we will store the files<br>
+```$ mkdir website```
+### IMPORTANT! Configuring SSH Authentications between our Servers
+1. Generate a ssh key on the jenkins<br>
+```$ ssh-keygen```
+2. Open up the sshd config of the remote SSH server (Docker)<br>
+```$ sudo su```<br>
+```$ vim /etc/ssh/sshd_config```<br>
+3. Change or uncomment the following inside the sshd_config then save<br>
+```
+PubKeyAuth yes
+PasswordAuth yes
+KbdInteractive yes
+UsePAM yes
+```
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/dc04b0fa-2657-4235-8f3a-24d3ee971229)
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/2ee892e3-c240-4b72-b498-aa0572e4c0c2)
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/88c5e3ac-437c-440d-bcdb-8d1d868eedd8)
+
+4. Restart sshd<br>
+```$ systemctl restart sshd```
+5. Set a password on remote docker SSH (my sample password is ```admin123```) make sure to remember this.<br>
+```$ passwd ubuntu```
+6.	 Try to connect your jenkins SSH to remote SSH from its terminal
+
+##### Jenkins SSH Terminal
+
+```$ sudo su jenkins```<br>
+```$ ssh ubuntu@<remote_ssh_ip>```<br>
+```$ exit```
+  
+7. Copy jenkins pub id to remote SSH server<br>
+```$ ssh-copy-id ubuntu@<remote_ssh_ip>```<br>
+
+8. In remote SSH (Docker instance), concatenate the ```id_rsa``` key on the remote SSH server then copy it inside to the **Manage Jenkins** > **Credentials**<br>
+```$ cat ~/.ssh/id_rsa```
+
+9. Run the following command for applying privileges<br>
+```$ sudo chmod 700 ~/.ssh```<br>
+```$ sudo chmod 640 ~/.ssh/authorized_keys```<br>
+```$ sudo chmod chown $USER ~/.ssh```<br>
+```$ sudo chmod chown $USER ~/.ssh/authorized_keys```
+
+#### OPTIONAL: If it still doesn’t work go to your Jenkins SSH instance then run again these 4 lines above 
+
+10.	After creating credentials, go to **Manage Jenkins** > **System** > **SSH remote hosts**. input the following required details.
+
+### You authenticated and now have access to Docker EC2 instance via Jenkins EC2 instance
+
+## Configure Jenkins for Docker instance
+
+1. Open Jenkins **Dashboard** > **Manage Jenkins** > **System** > **Add server group**
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/26131b22-1893-4d22-a663-25999fa56389)
+
+2. Click Add Server List then put the Docker server
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/d3f874c0-2a10-486c-a098-82b493e08712)
+
+3. Click **Save**
+
+## Making a Pipeline Project
+
+1.	Make a New Item and select ```Pipeline```.
+2.	In the Configuration enable ```GitHub hook trigger for GITscm polling```.
+3.	Copy the file below. You can make a ```Jenkinsfile``` and store it in the repository then point it out on the Build Steps your GitHub repo for SCM.
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/d4ac7ba8-568e-4839-8fca-27fdd6346288)
+
+4.	Click **Save**.
+5.	Configure Docker instance **Security group** and **add inbound rules** with ```8085``` port with ```0.0.0.0/0```.
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/962146e4-8fdc-4819-b88d-9f341078175f)
+
+6.	Add permission on running docker commands on our Docker EC2 instance.<br>
+```$ sudo usermod -aG docker ubuntu```<br>
+```$ newgrp docker```<br>
+To check if it works: <br>
+```$ docker ps```
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/a074f162-9cb4-4c0b-a68d-8d30a0d5dbb6)
+
+## Check if the Pipeline is Running Correctly
+
+1. Try to Save and Build your Pipeline project
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/04eb7f3b-56a0-4f1c-a0c5-43bd0fa78e8b)
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/6dac3152-e85e-4413-8efc-ca7b16e6a5e1)
+
+2. Click for **Build Now** and your Pipeline should be running as expected (all boxes are in green color)
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/5bc630c1-ffdb-4c8d-a3f1-c06712d907f3)
+
+3.	Now let’s check for our website so enter ```<dockerinstanceIP>:8085``` in your browser.
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/b2cc2186-f980-4a0b-842d-486f320bff77)
+
+### There you go! We have successfully deployed our website to docker after running a code scanning using SonarQube.
+
+## Testing our GitHub Webhooks if your website will Update 
+
+1.	Let us test our website if it will update whenever there are a commits in our git repository.
+2.	First is go to your repository, then click for the ```index.html```. Then click for **Edit** this file
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/f9df6fcc-3a1a-42e4-ba07-8960cc00d6b0)
+
+3.	Inside the file search for this line highlighted in the image then try to replace some other words for that line. Mine would be<br>
+```<h1>Hello<br>Congrats<br>Everyone!</h1>```
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/0d06d95c-c020-4693-b33f-b44a78d33ca1)
+
+4.	After changing, click **Commit changes…** then it commits
+5.	As you can see on the Jenkins Pipeline, it automatically runs since we have a GitHub Webhook associated with this Pipeline project.
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/733644d8-c635-4406-9a86-7cf07f2a29d0)
+
+6.	Let’s refresh our page again to see the changes in our website
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/c0a4dc17-5b78-4d2a-a846-521d8a2d40f1)
+
+### There you go! There is an update to our website due to new commits in our GitHub repository.
+
+## Cleaning Up
+1.	Delete all 3 EC2 instance in the EC2 instance lists
+
+## Troubleshooting
+
+1.	You might encounter something similar to this one where it stops on SonarQube stage. This is due to our instance was stopped.
+
+![image](https://github.com/didin012/CICD-Pipeline-EC2-Jenkins-SonarQube-Docker/assets/104528282/e53d9ade-43da-402e-986f-b2af097cfe0b)
+
+2.	What you can do is that restart the SonarQube EC2 instance then run this command again to power up the SonarQube<br>
+```$ ./<name_of_the_unzipped_folder>/bin/linux-x86-64/sonar.sh console```
+
